@@ -1,0 +1,29 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-added-large-files
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v2.0.5
+    hooks:
+      - id: prettier
+        files: "\\.(js|ts|json|md|ya?ml)$"
+
+  - repo: local
+    hooks:
+      - id: eslint
+        name: eslint (project)
+        entry: yarn lint --fix
+        language: system
+        types: [ts]
+        pass_filenames: false
+
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']

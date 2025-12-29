@@ -7,6 +7,7 @@ Support for toggling simultaneous terminals. The intention is to share a single 
 This is essentially [coc-terminal](https://github.com/fannheyward/coc-terminal) with more granular controls - exposing more of the internal terminal functions because I didn't love the toggling behavior.
 
 I use these hotkeys so that the toggle behavior is more consistent across normal, insert, and terminal modes.
+
 ```
 " Toggle the terminal with Ctrl-k
 nmap <silent> <C-k> <Plug>(coc-split-term-show)
@@ -19,6 +20,7 @@ tmap <silent> <C-k> <C-\><C-n><Plug>(coc-split-term-hide)
 `:CocInstall coc-split-term`
 
 ## Keymaps
+
 ```
 nmap <silent> <C-k> <Plug>(coc-split-term-show)
 nmap <silent> <C-k> <Plug>(coc-split-term-hide)
