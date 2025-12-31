@@ -1,10 +1,10 @@
-import { commands, ExtensionContext, Terminal, workspace, events } from 'coc.nvim';
+import { commands, ExtensionContext, Terminal, window, workspace } from 'coc.nvim';
 
 let terminal: Terminal | null = null;
 let showing = false;
 
 export async function activate(context: ExtensionContext): Promise<void> {
-  workspace.showMessage(`werd ${Math.floor(Math.random() * 10000 + 1)}`);
+  window.showInformationMessage(`werd ${Math.floor(Math.random() * 10000 + 1)}`);
 
   context.subscriptions.push(
     commands.registerCommand('split-term.Toggle', async () => {
@@ -30,7 +30,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
       ['n'],
       'split-term-toggle',
       async () => {
-        workspace.showMessage(`tog: PID ${terminal ? await terminal.processId : -1}`);
+        window.showInformationMessage(`tog: PID ${terminal ? await terminal.processId : -1}`);
         await toggle();
       },
       { sync: false }
@@ -40,7 +40,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
       ['n'],
       'split-term-hide',
       async () => {
-        workspace.showMessage(`hide: PID ${terminal ? await terminal.processId : -1}`);
+        window.showInformationMessage(`hide: PID ${terminal ? await terminal.processId : -1}`);
         await hide();
       },
       { sync: false }
@@ -50,7 +50,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
       ['n'],
       'split-term-show',
       async () => {
-        workspace.showMessage(`show: PID ${terminal ? await terminal.processId : -1}`);
+        window.showInformationMessage(`show: PID ${terminal ? await terminal.processId : -1}`);
         await show();
       },
       { sync: false }
@@ -62,21 +62,25 @@ async function setTerminal(): Promise<boolean> {
   if (terminal) {
     return true;
   } else {
-    terminal = await workspace.createTerminal({ name: 'coc-terminal' });
+    terminal = await window.createTerminal({ name: 'coc-terminal' });
     if (terminal) {
-      events.on('TermClose', (bufnr: number, recreate = false) => {
-        workspace.showMessage(`bufnr: ${bufnr}, ${recreate}`, 'warning');
+      window.onDidCloseTerminal((closed) => {
+        if (closed === terminal) {
+          window.showWarningMessage(`terminal closed: ${closed.name}`);
+          terminal = null;
+          showing = false;
+        }
       });
       return true;
     }
   }
-  workspace.showMessage(`Create terminal failed`, 'error');
+  window.showErrorMessage(`Create terminal failed`);
   return false;
 }
 
 async function hide(): Promise<void> {
   if (terminal) {
-    workspace.showMessage(`term: ${terminal}`);
+    window.showInformationMessage(`term: ${terminal}`);
     terminal.hide();
   }
 
@@ -86,11 +90,15 @@ async function hide(): Promise<void> {
 async function show(): Promise<void> {
   if (!(await setTerminal())) {
     showing = false;
-    workspace.showMessage(`Show terminal failed`, 'error');
+    window.showErrorMessage(`Show terminal failed`);
     return;
   }
 
-  if (!(terminal && terminal.show())) {
+  if (!terminal) {
+    return;
+  }
+
+  if (!(await terminal.show())) {
     terminal = null;
     await show();
   }
