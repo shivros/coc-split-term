@@ -33,7 +33,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
         window.showInformationMessage(`tog: PID ${terminal ? await terminal.processId : -1}`);
         await toggle();
       },
-      { sync: false }
+      { sync: false },
     ),
 
     workspace.registerKeymap(
@@ -43,7 +43,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
         window.showInformationMessage(`hide: PID ${terminal ? await terminal.processId : -1}`);
         await hide();
       },
-      { sync: false }
+      { sync: false },
     ),
 
     workspace.registerKeymap(
@@ -53,8 +53,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
         window.showInformationMessage(`show: PID ${terminal ? await terminal.processId : -1}`);
         await show();
       },
-      { sync: false }
-    )
+      { sync: false },
+    ),
   );
 }
 
